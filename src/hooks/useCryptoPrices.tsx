@@ -2,6 +2,15 @@ import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
+interface CryptoPriceData {
+    id: string;
+    name: string;
+    symbol: string;
+    current_price: number;
+    price_change_percentage_24h: number;
+  }
+  
+
 const DEFAULT_COINS = ["bitcoin", "ethereum", "solana", "polygon", "dogecoin"]
 
 export const useCryptoPrices = () => {
@@ -22,7 +31,7 @@ export const useCryptoPrices = () => {
   })
 }
 
-export const useSearchCrypto = (query) => {
+export const useSearchCrypto = (query: any) => {
   return useQuery({
     queryKey: ['searchCrypto', query],
     queryFn: async () => {
@@ -45,7 +54,7 @@ export default function CryptoTracker() {
   const { data, error, isLoading } = useCryptoPrices()
   const searchQuery = useSearchCrypto(search.toLowerCase())
 
-  const handleSearch = async (e) => {
+  const handleSearch = async (e: any) => {
     e.preventDefault()
     if (!search.trim()) return
 
@@ -56,12 +65,16 @@ export default function CryptoTracker() {
     }
   }
 
-  const filteredData = data?.filter(coin => coins.includes(coin.id)) || []
+const filteredData = (data?.filter((crypto: CryptoPriceData) =>
+    coins.includes(crypto.id)
+  ) || []) as CryptoPriceData[];
+  
   const sortedCoins = [...filteredData].sort((a, b) => {
-    const aChange = a.price_change_percentage_24h || 0
-    const bChange = b.price_change_percentage_24h || 0
-    return sortAsc ? aChange - bChange : bChange - aChange
-  })
+    const aChange = a.price_change_percentage_24h || 0;
+    const bChange = b.price_change_percentage_24h || 0;
+    return sortAsc ? aChange - bChange : bChange - aChange;
+  });
+  
 
   if (isLoading) return <div className="p-4 text-center">Loading...</div>
   if (error) return <div className="p-4 text-red-500 text-center">Error fetching data</div>
@@ -98,18 +111,21 @@ export default function CryptoTracker() {
           </tr>
         </thead>
         <tbody>
-          {sortedCoins.map((coin) => (
-            <tr key={coin.id} className="border-b hover:bg-gray-50">
-              <td className="py-2 capitalize">{coin.name}</td>
-              <td className="py-2 uppercase">{coin.symbol}</td>
-              <td className="py-2">${coin.current_price.toLocaleString()}</td>
+        {sortedCoins.map((crypto) => (
+            <tr key={crypto.id} className="border-b hover:bg-gray-50">
+              <td className="py-2 capitalize">{crypto.name}</td>
+              <td className="py-2 uppercase">{crypto.symbol}</td>
+              <td className="py-2">${crypto.current_price.toLocaleString()}</td>
               <td
-                className={`py-2 font-medium ${coin.price_change_percentage_24h > 0 ? 'text-green-600' : 'text-red-500'}`}
+                className={`py-2 font-medium ${
+                  crypto.price_change_percentage_24h > 0 ? 'text-green-600' : 'text-red-500'
+                }`}
               >
-                {coin.price_change_percentage_24h.toFixed(2)}%
+                {crypto.price_change_percentage_24h.toFixed(2)}%
               </td>
             </tr>
           ))}
+          
         </tbody>
       </table>
     </div>
