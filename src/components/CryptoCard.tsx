@@ -8,10 +8,10 @@ export const CryptoCard = ({ crypto }: CryptoCardProps) => {
   const isPositive = crypto.price_change_percentage_24h >= 0;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col">
+    <div className="bg-white font-[Poppins] dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col">
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-lg font-[Poppins] font-semibold text-gray-900 dark:text-white">
             {crypto.name} ({crypto.symbol.toUpperCase()})
           </h3>
           <p className="text-2xl font-bold mt-2 text-gray-900 dark:text-white">
