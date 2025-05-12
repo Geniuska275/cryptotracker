@@ -1,8 +1,5 @@
 {
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "/api/cryptoTracker"
-        }
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/" }
     ]
-}
+  }
